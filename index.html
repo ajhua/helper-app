@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helper — Personal Academic &amp; Productivity Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-app: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-soft: #eef2ff;
+      --accent-text: #4338ca;
+    }
+
+    [data-theme="dark"] {
+      --bg-app: #0b1120;
+      --bg-surface: #111827;
+      --bg-subtle: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #1f2937;
+      --accent-soft: rgba(99, 102, 241, 0.16);
+      --accent-text: #a5b4fc;
+    }
+
+    [data-theme="warm"] {
+      --bg-app: #faf7f2;
+      --bg-surface: #fffdf9;
+      --bg-subtle: #f3ede2;
+      --text-main: #292524;
+      --text-muted: #78716c;
+      --border-color: #e7e0d3;
+    }
+
+    [data-theme="slate"] {
+      --bg-app: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-subtle: #334155;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --accent-text: #7dd3fc;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .surface {
+      background-color: var(--bg-surface);
+      border-color: var(--border-color);
+    }
+
+    .subtle {
+      background-color: var(--bg-subtle);
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+    }
+
+    .border-theme {
+      border-color: var(--border-color);
+    }
+
+    .btn-accent {
+      background-color: var(--accent);
+      color: #ffffff;
+    }
+    .btn-accent:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .badge-accent {
+      background-color: var(--accent-soft);
+      color: var(--accent-text);
+    }
+
+    .nav-active {
+      background-color: var(--accent-soft);
+      color: var(--accent-text);
+      font-weight: 600;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.4);
+      border-radius: 9999px;
+    }
+
+    .compact-mode .card-pad {
+      padding: 0.75rem !important;
+    }
+    .compact-mode .section-gap {
+      gap: 0.75rem !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden">
+  <!-- Top Header -->
+  <header class="surface border-b sticky top-0 z-30 backdrop-blur-md bg-opacity-95">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex items-center gap-2 sm:gap-4">
+      <!-- Mobile menu toggle -->
+      <button id="mobileMenuBtn" type="button" class="lg:hidden p-2 rounded-lg subtle hover:opacity-80" aria-label="Toggle navigation">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Brand -->
+      <div class="flex items-center gap-2.5 shrink-0 cursor-pointer" id="brandHomeBtn">
+        <div class="w-9 h-9 rounded-xl btn-accent flex items-center justify-center shadow-sm">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div class="hidden sm:block">
+          <div id="appTitleDisplay" class="font-bold text-base leading-tight tracking-tight">Helper</div>
+          <div id="appSubtitleDisplay" class="text-xs text-muted leading-tight">Fall Semester • Student Hub</div>
+        </div>
+      </div>
+
+      <!-- Global Search Bar -->
+      <div class="flex-1 max-w-2xl relative">
+        <div class="relative flex items-center">
+          <i data-lucide="search" class="w-4 h-4 text-muted absolute left-3 pointer-events-none"></i>
+          <input
+            id="globalSearchInput"
+            type="text"
+            autocomplete="off"
+            placeholder="Search tasks, timetable, notes, books, syllabus, tut sheets, links..."
+            class="w-full pl-9 pr-16 py-2 text-sm rounded-xl border border-theme subtle focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition"
+          />
+          <div class="absolute right-2.5 flex items-center gap-1">
+            <button id="clearSearchBtn" type="button" class="hidden p-1 rounded hover:bg-black/10 text-muted" aria-label="Clear search">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+            <kbd class="hidden md:inline-block px-1.5 py-0.5 text-[10px] font-medium text-muted surface border border-theme rounded">/</kbd>
+          </div>
+        </div>
+        <!-- Instant Search Dropdown -->
+        <div id="searchDropdown" class="hidden absolute left-0 right-0 mt-1.5 surface border border-theme rounded-xl shadow-xl z-50 max-h-[70vh] overflow-y-auto p-2"></div>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <button id="quickAddBtn" type="button" class="btn-accent px-3 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 shadow-sm transition">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span class="hidden md:inline">Quick Add</span>
+        </button>
+        <button id="customizeBtn" type="button" class="p-2 rounded-xl surface border border-theme hover:opacity-80 transition flex items-center gap-1.5 text-sm" title="Customize Helper">
+          <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+          <span class="hidden xl:inline font-medium">Customize</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile/Tablet Nav Strip -->
+    <nav id="mobileNavStrip" class="lg:hidden border-t border-theme px-3 py-1.5 flex items-center gap-1 overflow-x-auto text-xs">
+      <!-- Populated by JS -->
+    </nav>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="flex-1 max-w-7xl w-full mx-auto flex gap-6 px-3 sm:px-6 py-5">
+    <!-- Desktop Sidebar -->
+    <aside class="hidden lg:flex flex-col w-60 shrink-0 gap-4">
+      <div class="surface border border-theme rounded-2xl p-3 flex flex-col gap-1" id="desktopNav">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Quick Stats Card -->
+      <div class="surface border border-theme rounded-2xl p-4 flex flex-col gap-3">
+        <div class="text-xs font-semibold uppercase tracking-wider text-muted">At a Glance</div>
+        <div id="sidebarStats" class="flex flex-col gap-2 text-sm"></div>
+      </div>
+
+      <!-- Courses Quick Filter -->
+      <div class="surface border border-theme rounded-2xl p-4 flex flex-col gap-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-muted">My Courses</span>
+          <button id="sidebarAddCourseBtn" type="button" class="text-xs font-medium hover:underline" style="color: var(--accent-text)">+ Add</button>
+        </div>
+        <div id="sidebarCourses" class="flex flex-col gap-1.5"></div>
+      </div>
+    </aside>
+
+    <!-- Mobile Drawer Overlay -->
+    <div id="mobileDrawer" class="hidden fixed inset-0 z-50 lg:hidden">
+      <div id="mobileDrawerBackdrop" class="absolute inset-0 bg-black/40 backdrop-blur-xs"></div>
+      <div class="relative w-72 max-w-[85vw] h-full surface border-r border-theme p-4 flex flex-col gap-4 overflow-y-auto">
+        <div class="flex items-center justify-between">
+          <div class="font-bold text-lg">Helper Menu</div>
+          <button id="closeMobileDrawerBtn" type="button" class="p-1.5 rounded-lg subtle">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div id="drawerNav" class="flex flex-col gap-1"></div>
+        <div class="border-t border-theme pt-3">
+          <div class="text-xs font-semibold uppercase tracking-wider text-muted mb-2">Courses</div>
+          <div id="drawerCourses" class="flex flex-col gap-1.5"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main id="mainContent" class="flex-1 min-w-0 flex flex-col gap-5">
+      <!-- Rendered dynamically by JS -->
+    </main>
+  </div>
+
+  <!-- Reusable Modal -->
+  <div id="appModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="appModalBackdrop" class="absolute inset-0 bg-black/50 backdrop-blur-xs"></div>
+    <div class="relative w-full max-w-xl surface border border-theme rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-5 py-4 border-b border-theme flex items-center justify-between">
+        <h3 id="modalTitle" class="font-semibold text-base">Modal</h3>
+        <button id="modalCloseBtn" type="button" class="p-1.5 rounded-lg subtle hover:opacity-80">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div id="modalBody" class="p-5 overflow-y-auto flex-1"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = 'helper_app_state_v1';
+
+      const ACCENTS = {
+        indigo: { hex: '#4f46e5', hover: '#4338ca', soft: '#eef2ff', text: '#4338ca' },
+        emerald: { hex: '#059669', hover: '#047857', soft: '#ecfdf5', text: '#047857' },
+        rose: { hex: '#e11d48', hover: '#be123c', soft: '#fff1f2', text: '#be123c' },
+        amber: { hex: '#d97706', hover: '#b45309', soft: '#fffbeb', text: '#b45309' },
+        teal: { hex: '#0d9488', hover: '#0f766e', soft: '#f0fdfa', text: '#0f766e' },
+        violet: { hex: '#7c3aed', hover: '#6d28d9', soft: '#f5f3ff', text: '#6d28d9' }
+      };
+
+      const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const TIME_SLOTS = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+
+      const NAV_ITEMS = [
+        { id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard' },
+        { id: 'tasks', label: 'Tasks & Works', icon: 'check-square' },
+        { id: 'timetable', label: 'Timetable', icon: 'calendar-clock' },
+        { id: 'courses', label: 'Courses & Materials', icon: 'graduation-cap' },
+        { id: 'notes', label: 'Notes', icon: 'notebook-pen' },
+        { id: 'links', label: 'Important Links', icon: 'link' },
+        { id: 'search', label: 'Search Everything', icon: 'search' }
+      ];
+
+      function getDefaultState() {
+        return {
+          settings: {
+            appTitle: 'Helper',
+            userName: 'Alex',
+            subtitle: 'Semester 5 • B.Tech Hub',
+            theme: 'light',
+            accent: 'indigo',
+            compact: false,
+            widgets: {
+              schedule: true,
+              urgent: true,
+              tasks: true,
+              links: true,
+              notes: true
+            }
+          },
+          courses: [
+            { id: 'c1', code: 'CS301', name: 'Data Structures & Algorithms', instructor: 'Prof. R. Sharma', color: '#4f46e5', credits: 4 },
+            { id: 'c2', code: 'CS302', name: 'Operating Systems', instructor: 'Prof. M. Verma', color: '#059669', credits: 4 },
+            { id: 'c3', code: 'MA301', name: 'Probability & Statistics', instructor: 'Dr. A. Nair', color: '#d97706', credits: 3 },
+            { id: 'c4', code: 'EC305', name: 'Computer Networks', instructor: 'Dr. K. Iyer', color: '#e11d48', credits: 3 }
+          ],
+          tasks: [
+            { id: 't1', title: 'Finish Graph Algorithms Tut Sheet 4', cadence: 'daily', urgency: 'urgent', courseId: 'c1', due: 'Today, 8:00 PM', done: false, notes: 'Focus on Dijkstra & Bellman-Ford proofs' },
+            { id: 't2', title: 'Submit OS Process Scheduling Lab Report', cadence: 'daily', urgency: 'urgent', courseId: 'c2', due: 'Tomorrow, 11:59 PM', done: false, notes: 'Upload PDF on Moodle' },
+            { id: 't3', title: 'Revise Bayes Theorem & Conditional Expectation', cadence: 'daily', urgency: 'non-urgent', courseId: 'c3', due: 'Today', done: true, notes: 'Pages 42-55 of Ross textbook' },
+            { id: 't4', title: 'Prepare Weekly Network Packet Lab Notes', cadence: 'weekly', urgency: 'non-urgent', courseId: 'c4', due: 'Friday', done: false, notes: 'Wireshark TCP handshake capture' },
+            { id: 't5', title: 'Complete Weekly DSA Practice Set (5 LeetCode Medium)', cadence: 'weekly', urgency: 'urgent', courseId: 'c1', due: 'Sunday', done: false, notes: 'Dynamic Programming & Trees' },
+            { id: 't6', title: 'Organize Semester Exam Revision Binder', cadence: 'weekly', urgency: 'non-urgent', courseId: '', due: 'Sunday', done: false, notes: 'Print all tut sheets' }
+          ],
+          timetable: [
+            { id: 'tt1', day: 'Monday', start: '09:00', end: '10:00', courseId: 'c1', type: 'Lecture', room: 'LH-102' },
+            { id: 'tt2', day: 'Monday', start: '11:00', end: '12:00', courseId: 'c2', type: 'Lecture', room: 'LH-204' },
+            { id: 'tt3', day: 'Monday', start: '14:00', end: '16:00', courseId: 'c1', type: 'Lab', room: 'CS-Lab 2' },
+            { id: 'tt4', day: 'Tuesday', start: '10:00', end: '11:00', courseId: 'c3', type: 'Lecture', room: 'LH-105' },
+            { id: 'tt5', day: 'Tuesday', start: '15:00', end: '16:00', courseId: 'c4', type: 'Tutorial', room: 'TR-03' },
+            { id: 'tt6', day: 'Wednesday', start: '09:00', end: '10:00', courseId: 'c1', type: 'Lecture', room: 'LH-102' },
+            { id: 'tt7', day: 'Wednesday', start: '13:00', end: '14:00', courseId: 'c4', type: 'Lecture', room: 'LH-301' },
+            { id: 'tt8', day: 'Thursday', start: '11:00', end: '12:00', courseId: 'c2', type: 'Tutorial', room: 'TR-01' },
+            { id: 'tt9', day: 'Thursday', start: '14:00', end: '16:00', courseId: 'c2', type: 'Lab', room: 'OS-Lab' },
+            { id: 'tt10', day: 'Friday', start: '10:00', end: '11:00', courseId: 'c3', type: 'Lecture', room: 'LH-105' },
+            { id: 'tt11', day: 'Friday', start: '12:00', end: '13:00', courseId: 'c4', type: 'Lecture', room: 'LH-301' }
+          ],
+          notes: [
+            { id: 'n1', title: 'Dynamic Programming Patterns', courseId: 'c1', pinned: true, updated: '2026-11-23', tags: ['algorithms', 'exam'], content: '1. 0/1 Knapsack: state dp[i][w].\n2. Longest Common Subsequence: O(n*m) table.\n3. Memoization vs Tabulation: always check base cases first.' },
+            { id: 'n2', title: 'Deadlocks & Banker Algorithm', courseId: 'c2', pinned: true, updated: '2026-11-22', tags: ['os', 'midterm'], content: 'Four Coffman conditions: Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait.\nBanker algorithm checks Safe Sequence using Need = Max - Allocation.' },
+            { id: 'n3', title: 'TCP Congestion Control Summary', courseId: 'c4', pinned: false, updated: '2026-11-20', tags: ['networks', 'tcp'], content: 'Slow Start (exponential cwnd growth) -> Congestion Avoidance (AIMD) -> Fast Retransmit on 3 duplicate ACKs.' }
+          ],
+          books: [
+            { id: 'b1', title: 'Introduction to Algorithms (CLRS)', author: 'Cormen, Leiserson, Rivest, Stein', courseId: 'c1', edition: '4th Ed.', status: 'Reading Ch. 22', url: 'https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/' },
+            { id: 'b2', title: 'Operating System Concepts', author: 'Silberschatz, Galvin, Gagne', courseId: 'c2', edition: '10th Ed.', status: 'Reference', url: 'https://www.os-book.com/' },
+            { id: 'b3', title: 'A First Course in Probability', author: 'Sheldon Ross', courseId: 'c3', edition: '9th Ed.', status: 'Ch. 4 Done', url: '' },
+            { id: 'b4', title: 'Computer Networking: A Top-Down Approach', author: 'Kurose & Ross', courseId: 'c4', edition: '8th Ed.', status: 'Reading Ch. 3', url: '' }
+          ],
+          syllabus: [
+            { id: 's1', courseId: 'c1', unit: 'Unit 1: Asymptotics & Recurrences', topics: 'Master Theorem, Substitution, Amortized Analysis', completed: true },
+            { id: 's2', courseId: 'c1', unit: 'Unit 2: Trees & Heaps', topics: 'AVL, Red-Black Trees, Binary & Fibonacci Heaps', completed: true },
+            { id: 's3', courseId: 'c1', unit: 'Unit 3: Graph Algorithms', topics: 'BFS, DFS, Topological Sort, Dijkstra, Kruskal, Prim', completed: false },
+            { id: 's4', courseId: 'c2', unit: 'Unit 1: Process Management', topics: 'PCB, Context Switch, CPU Scheduling, Threads', completed: true },
+            { id: 's5', courseId: 'c2', unit: 'Unit 2: Synchronization & Deadlocks', topics: 'Semaphores, Monitors, Banker Algorithm', completed: false },
+            { id: 's6', courseId: 'c3', unit: 'Unit 1: Probability Axioms & Random Variables', topics: 'Bayes Rule, PMF, PDF, CDF, Expectation', completed: true },
+            { id: 's7', courseId: 'c4', unit: 'Unit 1: Application & Transport Layers', topics: 'HTTP, DNS, UDP, TCP Reliable Transfer & Congestion', completed: false }
+          ],
+          tutSheets: [
+            { id: 'ts1', title: 'Tut Sheet 1: Recurrences & Master Theorem', courseId: 'c1', sheetNo: 'TS-01', status: 'Completed', notes: 'All 8 problems solved', url: '' },
+            { id: 'ts2', title: 'Tut Sheet 4: Shortest Paths & MST', courseId: 'c1', sheetNo: 'TS-04', status: 'In Progress', notes: 'Q5 & Q7 remaining', url: '' },
+            { id: 'ts3', title: 'Tut Sheet 2: CPU Scheduling & Semaphores', courseId: 'c2', sheetNo: 'TS-02', status: 'Pending', notes: 'Due next Thursday', url: '' },
+            { id: 'ts4', title: 'Tut Sheet 3: Joint Distributions', courseId: 'c3', sheetNo: 'TS-03', status: 'Completed', notes: 'Verified with TA solutions', url: '' },
+            { id: 'ts5', title: 'Tut Sheet 2: Subnetting & CIDR', courseId: 'c4', sheetNo: 'TS-02', status: 'In Progress', notes: 'Practice VLSM questions', url: '' }
+          ],
+          links: [
+            { id: 'l1', title: 'University Moodle / LMS', category: 'Academics', courseId: '', url: 'https://moodle.org', description: 'Course slides, assignments & quiz submissions', pinned: true },
+            { id: 'l2', title: 'Digital Library & IEEE Xplore', category: 'Library', courseId: '', url: 'https://ieeexplore.ieee.org', description: 'Research papers and e-books', pinned: true },
+            { id: 'l3', title: 'MIT OCW Algorithms', category: 'Course Resource', courseId: 'c1', url: 'https://ocw.mit.edu', description: 'Lecture videos for graph algorithms', pinned: true },
+            { id: 'l4', title: 'GeeksforGeeks OS Archive', category: 'Course Resource', courseId: 'c2', url: 'https://www.geeksforgeeks.org', description: 'Quick revision for scheduling & deadlocks', pinned: false },
+            { id: 'l5', title: 'GitHub Student Pack', category: 'Tools', courseId: '', url: 'https://education.github.com', description: 'Repos and developer tools', pinned: true }
+          ]
+        };
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.settings && parsed.courses) return parsed;
+          }
+        } catch (e) {}
+        return getDefaultState();
+      }
+
+      let state = loadState();
+      let ui = {
+        activeView: 'dashboard',
+        selectedCourseId: 'all',
+        taskCadenceFilter: 'all', // all | daily | weekly
+        taskUrgencyFilter: 'all', // all | urgent | non-urgent
+        taskStatusFilter: 'active', // all | active | done
+        courseSubTab: 'all', // all | syllabus | tutSheets | books | notes
+        searchQuery: '',
+        searchCategory: 'all',
+        selectedDay: getTodayName()
+      };
+
+      function getTodayName() {
+        const idx = new Date().getDay(); // 0=Sun..6=Sat
+        const map = ['Monday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return map[idx] || 'Monday';
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {}
+      }
+
+      function uid(prefix) {
+        return prefix + '_' + Math.random().toString(36).slice(2, 9);
+      }
+
+      function esc(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function getCourse(courseId) {
+        return state.courses.find(c => c.id === courseId) || null;
+      }
+
+      function courseBadge(courseId) {
+        const c = getCourse(courseId);
+        if (!c) return '<span class="px-2 py-0.5 text-[11px] rounded-full subtle text-muted font-medium">General</span>';
+        return `<span class="px-2 py-0.5 text-[11px] rounded-full font-medium text-white" style="background-color:${esc(c.color)}">${esc(c.code)}</span>`;
+      }
+
+      function applyTheme() {
+        const s = state.settings;
+        document.documentElement.setAttribute('data-theme', s.theme || 'light');
+        const acc = ACCENTS[s.accent] || ACCENTS.indigo;
+        const root = document.documentElement.style;
+        root.setProperty('--accent', acc.hex);
+        root.setProperty('--accent-hover', acc.hover);
+        if (s.theme === 'dark' || s.theme === 'slate') {
+          root.setProperty('--accent-soft', acc.hex + '29');
+          root.setProperty('--accent-text', '#e2e8f0');
+        } else {
+          root.setProperty('--accent-soft', acc.soft);
+          root.setProperty('--accent-text', acc.text);
+        }
+        document.body.classList.toggle('compact-mode', !!s.compact);
+        document.getElementById('appTitleDisplay').textContent = s.appTitle || 'Helper';
+        document.getElementById('appSubtitleDisplay').textContent = s.subtitle || '';
+        document.title = (s.appTitle || 'Helper') + ' — Personal Hub';
+      }
+
+      function showToast(msg) {
+        const container = document.getElementById('toastContainer');
+        const el = document.createElement('div');
+        el.className = 'surface border border-theme shadow-lg rounded-xl px-4 py-2.5 text-sm font-medium flex items-center gap-2 pointer-events-auto transition-all';
+        el.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 shrink-0"></i><span>${esc(msg)}</span>`;
+        container.appendChild(el);
+        if (window.lucide) lucide.createIcons();
+        setTimeout(() => {
+          el.style.opacity = '0';
+          setTimeout(() => el.remove(), 200);
+        }, 2400);
+      }
+
+      // Global Search Engine across ALL entities
+      function runGlobalSearch(query) {
+        const q = (query || '').trim().toLowerCase();
+        if (!q) return [];
+        const results = [];
+
+        state.tasks.forEach(t => {
+          const c = getCourse(t.courseId);
+          const hay = `${t.title} ${t.notes} ${t.cadence} ${t.urgency} ${t.due} ${c ? c.code + ' ' + c.name : ''}`.toLowerCase();
+          if (hay.includes(q)) {
+            results.push({
+              type: 'task',
+              typeLabel: `${t.cadence === 'daily' ? 'Daily' : 'Weekly'} Task`,
+              id: t.id,
+              title: t.title,
+              subtitle: `${t.urgency === 'urgent' ? 'Urgent' : 'Non-Urgent'} • ${t.due || 'No due date'}${c ? ' • ' + c.code : ''}`,
+              done: t.done,
+              view: 'tasks'
+            });
+          }
+        });
+
+        state.timetable.forEach(slot => {
+          const c = getCourse(slot.courseId);
+          const hay = `${slot.day} ${slot.start} ${slot.end} ${slot.type} ${slot.room} ${c ? c.code + ' ' + c.name + ' ' + c.instructor : ''}`.toLowerCase();
+          if (hay.includes(q)) {
+            results.push({
+              type: 'timetable',
+              typeLabel: 'Timetable',
+              id: slot.id,
+              title: `${c ? c.code + ' — ' + c.name : 'Class'} (${slot.type})`,
+              subtitle: `${slot.day} • ${slot.start}–${slot.end} • Room ${slot.room || 'TBA'}`,
+              view: 'timetable'
+            });
+          }
+        });
+
+        state.notes.forEach(n => {
+          const c = getCourse(n.courseId);
+          const hay = `${n.title} ${n.content} ${(n.tags || []).join(' ')} ${c ? c.code + ' ' + c.name : ''}`.toLowerCase();
+          if (hay.includes(q)) {
+            results.push({
+              type: 'note',
+              typeLabel: 'Note',
+              id: n.id,
+              title: n.title,
+              subtitle: `${c ? c.code + ' • ' : ''}${n.content.slice(0, 75)}${n.content.length > 75 ? '...' : ''}`,
+              view: 'notes'
+            });
+          }
+        });
+
+        state.books.forEach(b => {
+          const c = getCourse(b.courseId);
+          const hay = `${b.title} ${b.author} ${b.edition} ${b.status} ${c ? c.code + ' ' + c.name : ''}`.toLowerCase();
+          if (hay.includes(q)) {
+            results.push({
+              type: 'book',
+              typeLabel: 'Book',
+              id: b.id,
+              title: b.title,
+              subtitle: `${b.author}${b.edition ? ' (' + b.edition + ')' : ''}${c ? ' • ' + c.code : ''}`,
+              view: 'courses',
+              subTab: 'books'
+            });
+          }
+        });
+
+        state.syllabus.forEach(s => {
+          const c = getCourse(s.courseId);
+          const hay = `${s.unit} ${s.topics} ${c ? c.code + ' ' + c.name : ''}`.toLowerCase();
+          if (hay.includes(q)) {
+            results.push({
+              type: 'syllabus',
+              typeLabel: 'Syllabus',
+              id: s.id,
+              title: s.unit,
+              subtitle: `${c ? c.code + ' • ' : ''}${s.topics}`,
+              view: 'courses',
+              subTab: 'syllabus'
+            });
+          }
+        });
+
+        state.tutSheets.forEach(ts => {
+          const c = getCourse(ts.courseId);
+          const hay = `${ts.title} ${ts.sheetNo} ${ts.status} ${ts.notes} ${c ? c.code + ' ' + c.name : ''}`.toLowerCase();
+          if (hay.includes(q)) {
+            results.push({
+              type: 'tutSheet',
+              typeLabel: 'Tut Sheet',
+              id: ts.id,
+              title: ts.title,
+              subtitle: `${ts.sheetNo} • ${ts.status}${c ? ' • ' + c.code : ''}`,
+              view: 'courses',
+              subTab: 'tutSheets'
+            });
+          }
+        });
+
+        state.links.forEach(l => {
+          const c = getCourse(l.courseId);
+          const hay = `${l.title} ${l.category} ${l.description} ${l.url} ${c ? c.code + ' ' + c.name : ''}`.toLowerCase();
+          if (hay.includes(q)) {
+            results.push({
+              type: 'link',
+              typeLabel: 'Important Link',
+              id: l.id,
+              title: l.title,
+              subtitle: `${l.category} • ${l.url}`,
+              url: l.url,
+              view: 'links'
+            });
+          }
+        });
+
+        state.courses.forEach(c => {
+          const hay = `${c.code} ${c.name} ${c.instructor}`.toLowerCase();
+          if (hay.includes(q)) {
+            results.push({
+              type: 'course',
+              typeLabel: 'Course',
+              id: c.id,
+              title: `${c.code}: ${c.name}`,
+              subtitle: `${c.instructor} • ${c.credits} Credits`,
+              view: 'courses'
+            });
+          }
+        });
+
+        return results;
+      }
+
+      function renderSearchDropdown() {
+        const dd = document.getElementById('searchDropdown');
+        const q = ui.searchQuery.trim();
+        if (!q || ui.activeView === 'search') {
+          dd.classList.add('hidden');
+          return;
+        }
+        const results = runGlobalSearch(q);
+        dd.classList.remove('hidden');
+        if (results.length === 0) {
+          dd.innerHTML = `<div class="p-4 text-center text-sm text-muted">No matches found for "<strong>${esc(q)}</strong>". Try another keyword.</div>`;
+          return;
+        }
+        const top = results.slice(0, 8);
+        dd.innerHTML = `
+          <div class="px-2.5 py-1.5 flex items-center justify-between text-xs text-muted border-b border-theme mb-1">
+            <span>${results.length} result${results.length === 1 ? '' : 's'} found</span>
+            <button type="button" data-action="open-search-view" class="font-medium hover:underline" style="color: var(--accent-text)">View all results &rarr;</button>
+          </div>
+          <div class="flex flex-col gap-1">
+            ${top.map(r => `
+              <button type="button" data-action="jump-result" data-view="${esc(r.view)}" data-subtab="${esc(r.subTab || '')}" data-id="${esc(r.id)}" data-type="${esc(r.type)}" class="w-full text-left px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 flex items-start justify-between gap-3 transition">
+                <div class="min-w-0">
+                  <div class="text-sm font-medium truncate">${esc(r.title)}</div>
+                  <div class="text-xs text-muted truncate">${esc(r.subtitle)}</div>
+                </div>
+                <span class="shrink-0 px-2 py-0.5 text-[10px] font-semibold rounded-full badge-accent">${esc(r.typeLabel)}</span>
+              </button>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      // Navigation & Sidebar Rendering
+      function renderNav() {
+        const navHTML = NAV_ITEMS.map(item => {
+          const active = ui.activeView === item.id;
+          return `
+            <button type="button" data-action="nav" data-view="${item.id}" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition ${active ? 'nav-active' : 'hover:bg-black/5 text-muted hover:text-current'}">
+              <i data-lucide="${item.icon}" class="w-4 h-4 shrink-0"></i>
+              <span class="truncate">${esc(item.label)}</span>
+            </button>
+          `;
+        }).join('');
+
+        document.getElementById('desktopNav').innerHTML = navHTML;
+        document.getElementById('drawerNav').innerHTML = navHTML;
+
+        document.getElementById('mobileNavStrip').innerHTML = NAV_ITEMS.map(item => {
+          const active = ui.activeView === item.id;
+          return `
+            <button type="button" data-action="nav" data-view="${item.id}" class="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-medium transition ${active ? 'nav-active' : 'text-muted'}">
+              <i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i>
+              <span>${esc(item.label)}</span>
+            </button>
+          `;
+        }).join('');
+
+        // Sidebar stats
+        const pendingTasks = state.tasks.filter(t => !t.done).length;
+        const urgentTasks = state.tasks.filter(t => !t.done && t.urgency === 'urgent').length;
+        const pendingTuts = state.tutSheets.filter(ts => ts.status !== 'Completed').length;
+        document.getElementById('sidebarStats').innerHTML = `
+          <div class="flex items-center justify-between"><span class="text-muted">Pending Tasks</span><span class="font-semibold">${pendingTasks}</span></div>
+          <div class="flex items-center justify-between"><span class="text-muted">Urgent Works</span><span class="font-semibold text-rose-500">${urgentTasks}</span></div>
+          <div class="flex items-center justify-between"><span class="text-muted">Open Tut Sheets</span><span class="font-semibold">${pendingTuts}</span></div>
+          <div class="flex items-center justify-between"><span class="text-muted">Saved Links</span><span class="font-semibold">${state.links.length}</span></div>
+        `;
+
+        // Courses list
+        const coursesHTML = [
+          `<button type="button" data-action="filter-course" data-course="all" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${ui.selectedCourseId === 'all' ? 'nav-active' : 'text-muted hover:bg-black/5'}">
+            <span>All Courses</span><span>${state.courses.length}</span>
+          </button>`,
+          ...state.courses.map(c => `
+            <button type="button" data-action="filter-course" data-course="${esc(c.id)}" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 ${ui.selectedCourseId === c.id ? 'nav-active' : 'hover:bg-black/5'}">
+              <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color:${esc(c.color)}"></span>
+              <span class="truncate flex-1">${esc(c.code)} • ${esc(c.name)}</span>
+            </button>
+          `)
+        ].join('');
+
+        document.getElementById('sidebarCourses').innerHTML = coursesHTML;
+        document.getElementById('drawerCourses').innerHTML = coursesHTML;
+      }
+
+      // Main View Renderer
+      function renderMain() {
+        const main = document.getElementById('mainContent');
+        switch (ui.activeView) {
+          case 'dashboard': main.innerHTML = renderDashboard(); break;
+          case 'tasks': main.innerHTML = renderTasksView(); break;
+          case 'timetable': main.innerHTML = renderTimetableView(); break;
+          case 'courses': main.innerHTML = renderCoursesView(); break;
+          case 'notes': main.innerHTML = renderNotesView(); break;
+          case 'links': main.innerHTML = renderLinksView(); break;
+          case 'search': main.innerHTML = renderSearchView(); break;
+          default: main.innerHTML = renderDashboard();
+        }
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function renderDashboard() {
+        const w = state.settings.widgets;
+        const today = getTodayName();
+        const todayClasses = state.timetable
+          .filter(s => s.day === today)
+          .sort((a, b) => a.start.localeCompare(b.start));
+        const urgentList = state.tasks.filter(t => !t.done && t.urgency === 'urgent');
+        const dailyList = state.tasks.filter(t => t.cadence === 'daily' && !t.done);
+        const weeklyList = state.tasks.filter(t => t.cadence === 'weekly' && !t.done);
+        const pinnedNotes = state.notes.filter(n => n.pinned);
+        const pinnedLinks = state.links.filter(l => l.pinned);
+
+        return `
+          <!-- Greeting Banner -->
+          <div class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Welcome back, ${esc(state.settings.userName || 'Student')}</h1>
+              <p class="text-sm text-muted mt-0.5">Today is ${esc(today)}. You have <strong class="text-rose-500">${urgentList.length} urgent</strong> work${urgentList.length === 1 ? '' : 's'} and <strong>${todayClasses.length}</strong> class${todayClasses.length === 1 ? '' : 'es'} scheduled.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" data-action="open-add" data-kind="task" class="px-3 py-1.5 rounded-xl text-xs font-medium surface border border-theme hover:opacity-80 flex items-center gap-1.5">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Task
+              </button>
+              <button type="button" data-action="open-add" data-kind="note" class="px-3 py-1.5 rounded-xl text-xs font-medium surface border border-theme hover:opacity-80 flex items-center gap-1.5">
+                <i data-lucide="notebook-pen" class="w-3.5 h-3.5"></i> New Note
+              </button>
+              <button type="button" data-action="open-add" data-kind="link" class="px-3 py-1.5 rounded-xl text-xs font-medium surface border border-theme hover:opacity-80 flex items-center gap-1.5">
+                <i data-lucide="link" class="w-3.5 h-3.5"></i> Save Link
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 section-gap">
+            ${w.schedule ? `
+              <section class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 font-semibold"><i data-lucide="calendar-clock" class="w-4 h-4" style="color: var(--accent)"></i> Today's Schedule (${esc(today)})</div>
+                  <button type="button" data-action="nav" data-view="timetable" class="text-xs font-medium hover:underline" style="color: var(--accent-text)">Full Timetable</button>
+                </div>
+                ${todayClasses.length === 0 ? `<div class="text-sm text-muted py-4 text-center">No classes scheduled for ${esc(today)}.</div>` : `
+                  <div class="flex flex-col gap-2">
+                    ${todayClasses.map(slot => {
+                      const c = getCourse(slot.courseId);
+                      return `
+                        <div class="p-3 rounded-xl subtle flex items-center justify-between gap-3">
+                          <div class="flex items-center gap-3 min-w-0">
+                            <span class="w-1.5 h-8 rounded-full shrink-0" style="background-color:${c ? esc(c.color) : '#64748b'}"></span>
+                            <div class="min-w-0">
+                              <div class="text-sm font-semibold truncate">${c ? esc(c.code + ' — ' + c.name) : 'Class'}</div>
+                              <div class="text-xs text-muted">${esc(slot.type)} • Room ${esc(slot.room || 'TBA')}</div>
+                            </div>
+                          </div>
+                          <span class="text-xs font-semibold shrink-0 px-2 py-1 rounded-lg surface border border-theme">${esc(slot.start)}–${esc(slot.end)}</span>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                `}
+              </section>
+            ` : ''}
+
+            ${w.urgent ? `
+              <section class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 font-semibold"><i data-lucide="flame" class="w-4 h-4 text-rose-500"></i> Urgent Works</div>
+                  <button type="button" data-action="nav" data-view="tasks" class="text-xs font-medium hover:underline" style="color: var(--accent-text)">All Tasks</button>
+                </div>
+                ${urgentList.length === 0 ? `<div class="text-sm text-muted py-4 text-center">All urgent works are completed!</div>` : `
+                  <div class="flex flex-col gap-2">
+                    ${urgentList.slice(0, 5).map(t => renderTaskRowCompact(t)).join('')}
+                  </div>
+                `}
+              </section>
+            ` : ''}
+
+            ${w.tasks ? `
+              <section class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 font-semibold"><i data-lucide="list-todo" class="w-4 h-4" style="color: var(--accent)"></i> Daily &amp; Weekly Queue</div>
+                  <button type="button" data-action="nav" data-view="tasks" class="text-xs font-medium hover:underline" style="color: var(--accent-text)">Manage</button>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div class="p-3 rounded-xl subtle">
+                    <div class="text-muted">Daily Pending</div>
+                    <div class="text-xl font-bold mt-0.5">${dailyList.length}</div>
+                  </div>
+                  <div class="p-3 rounded-xl subtle">
+                    <div class="text-muted">Weekly Pending</div>
+                    <div class="text-xl font-bold mt-0.5">${weeklyList.length}</div>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  ${[...dailyList, ...weeklyList].slice(0, 4).map(t => renderTaskRowCompact(t)).join('') || '<div class="text-sm text-muted text-center py-2">No pending tasks.</div>'}
+                </div>
+              </section>
+            ` : ''}
+
+            ${w.links ? `
+              <section class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 font-semibold"><i data-lucide="link" class="w-4 h-4" style="color: var(--accent)"></i> Important Links</div>
+                  <button type="button" data-action="nav" data-view="links" class="text-xs font-medium hover:underline" style="color: var(--accent-text)">All Links</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  ${pinnedLinks.slice(0, 6).map(l => `
+                    <a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" class="p-2.5 rounded-xl subtle hover:opacity-85 transition flex items-center justify-between gap-2">
+                      <div class="min-w-0">
+                        <div class="text-xs font-semibold truncate">${esc(l.title)}</div>
+                        <div class="text-[11px] text-muted truncate">${esc(l.category)}</div>
+                      </div>
+                      <i data-lucide="external-link" class="w-3.5 h-3.5 text-muted shrink-0"></i>
+                    </a>
+                  `).join('')}
+                </div>
+              </section>
+            ` : ''}
+          </div>
+
+          ${w.notes ? `
+            <section class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 font-semibold"><i data-lucide="pin" class="w-4 h-4" style="color: var(--accent)"></i> Pinned Notes</div>
+                <button type="button" data-action="nav" data-view="notes" class="text-xs font-medium hover:underline" style="color: var(--accent-text)">All Notes</button>
+              </div>
+              ${pinnedNotes.length === 0 ? `<div class="text-sm text-muted">Pin any note to keep it handy here.</div>` : `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  ${pinnedNotes.map(n => `
+                    <div class="p-3.5 rounded-xl subtle flex flex-col gap-1.5 cursor-pointer hover:opacity-90" data-action="edit-item" data-kind="note" data-id="${esc(n.id)}">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="text-sm font-semibold truncate">${esc(n.title)}</span>
+                        ${courseBadge(n.courseId)}
+                      </div>
+                      <p class="text-xs text-muted line-clamp-3 whitespace-pre-line">${esc(n.content)}</p>
+                    </div>
+                  `).join('')}
+                </div>
+              `}
+            </section>
+          ` : ''}
+        `;
+      }
+
+      function renderTaskRowCompact(t) {
+        return `
+          <div class="p-2.5 rounded-xl subtle flex items-center justify-between gap-2">
+            <label class="flex items-center gap-2.5 min-w-0 cursor-pointer flex-1">
+              <input type="checkbox" ${t.done ? 'checked' : ''} data-action="toggle-task" data-id="${esc(t.id)}" class="w-4 h-4 rounded accent-indigo-600 shrink-0" />
+              <div class="min-w-0">
+                <div class="text-sm font-medium truncate ${t.done ? 'line-through text-muted' : ''}">${esc(t.title)}</div>
+                <div class="text-[11px] text-muted flex items-center gap-1.5 flex-wrap">
+                  <span>${t.cadence === 'daily' ? 'Daily' : 'Weekly'}</span>
+                  <span>•</span>
+                  <span>${esc(t.due || 'No due date')}</span>
+                </div>
+              </div>
+            </label>
+            <div class="flex items-center gap-1.5 shrink-0">
+              ${t.urgency === 'urgent' ? '<span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-rose-500/15 text-rose-500">Urgent</span>' : '<span class="px-2 py-0.5 text-[10px] font-medium rounded-full bg-slate-500/15 text-muted">Non-Urgent</span>'}
+              ${courseBadge(t.courseId)}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderTasksView() {
+        const filtered = state.tasks.filter(t => {
+          if (ui.selectedCourseId !== 'all' && t.courseId !== ui.selectedCourseId) return false;
+          if (ui.taskCadenceFilter !== 'all' && t.cadence !== ui.taskCadenceFilter) return false;
+          if (ui.taskUrgencyFilter !== 'all' && t.urgency !== ui.taskUrgencyFilter) return false;
+          if (ui.taskStatusFilter === 'active' && t.done) return false;
+          if (ui.taskStatusFilter === 'done' && !t.done) return false;
+          return true;
+        });
+
+        return `
+          <div class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h1 class="text-xl font-bold">Tasks &amp; Works</h1>
+                <p class="text-xs text-muted">Organize daily &amp; weekly tasks, urgent &amp; non-urgent works.</p>
+              </div>
+              <button type="button" data-action="open-add" data-kind="task" class="btn-accent px-3.5 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 self-start sm:self-auto">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add Task / Work
+              </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-theme">
+              <div class="flex items-center gap-1 p-1 rounded-xl subtle text-xs">
+                ${['all', 'daily', 'weekly'].map(c => `
+                  <button type="button" data-action="task-filter" data-filter="cadence" data-val="${c}" class="px-2.5 py-1 rounded-lg font-medium capitalize ${ui.taskCadenceFilter === c ? 'surface shadow-xs' : 'text-muted'}">${c}</button>
+                `).join('')}
+              </div>
+              <div class="flex items-center gap-1 p-1 rounded-xl subtle text-xs">
+                ${[{v:'all',l:'All Urgency'},{v:'urgent',l:'Urgent'},{v:'non-urgent',l:'Non-Urgent'}].map(u => `
+                  <button type="button" data-action="task-filter" data-filter="urgency" data-val="${u.v}" class="px-2.5 py-1 rounded-lg font-medium ${ui.taskUrgencyFilter === u.v ? 'surface shadow-xs' : 'text-muted'}">${u.l}</button>
+                `).join('')}
+              </div>
+              <div class="flex items-center gap-1 p-1 rounded-xl subtle text-xs">
+                ${[{v:'active',l:'Pending'},{v:'done',l:'Completed'},{v:'all',l:'All'}].map(s => `
+                  <button type="button" data-action="task-filter" data-filter="status" data-val="${s.v}" class="px-2.5 py-1 rounded-lg font-medium ${ui.taskStatusFilter === s.v ? 'surface shadow-xs' : 'text-muted'}">${s.l}</button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- List -->
+            <div class="flex flex-col gap-2.5">
+              ${filtered.length === 0 ? `<div class="py-10 text-center text-sm text-muted">No tasks match your current filters.</div>` : filtered.map(t => `
+                <div class="p-3.5 rounded-xl subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <label class="flex items-start gap-3 cursor-pointer flex-1 min-w-0">
+                    <input type="checkbox" ${t.done ? 'checked' : ''} data-action="toggle-task" data-id="${esc(t.id)}" class="mt-0.5 w-4 h-4 rounded accent-indigo-600 shrink-0" />
+                    <div class="min-w-0">
+                      <div class="text-sm font-semibold ${t.done ? 'line-through text-muted' : ''}">${esc(t.title)}</div>
+                      ${t.notes ? `<div class="text-xs text-muted mt-0.5">${esc(t.notes)}</div>` : ''}
+                      <div class="flex flex-wrap items-center gap-2 mt-1.5 text-[11px] text-muted">
+                        <span class="px-2 py-0.5 rounded-full surface border border-theme font-medium">${t.cadence === 'daily' ? 'Daily' : 'Weekly'}</span>
+                        ${t.urgency === 'urgent' ? '<span class="px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-500 font-semibold">Urgent</span>' : '<span class="px-2 py-0.5 rounded-full bg-slate-500/15 text-muted font-medium">Non-Urgent</span>'}
+                        ${courseBadge(t.courseId)}
+                        ${t.due ? `<span>Due: ${esc(t.due)}</span>` : ''}
+                      </div>
+                    </div>
+                  </label>
+                  <div class="flex items-center gap-1 self-end sm:self-center shrink-0">
+                    <button type="button" data-action="edit-item" data-kind="task" data-id="${esc(t.id)}" class="p-1.5 rounded-lg hover:bg-black/10 text-muted" title="Edit">
+                      <i data-lucide="pencil" class="w-4 h-4"></i>
+                    </button>
+                    <button type="button" data-action="delete-item" data-kind="task" data-id="${esc(t.id)}" class="p-1.5 rounded-lg hover:bg-rose-500/15 text-rose-500" title="Delete">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderTimetableView() {
+        return `
+          <div class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h1 class="text-xl font-bold">Weekly Timetable &amp; Schedule</h1>
+                <p class="text-xs text-muted">Click any slot to edit or add new classes, labs, and tutorials.</p>
+              </div>
+              <button type="button" data-action="open-add" data-kind="timetable" class="btn-accent px-3.5 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 self-start sm:self-auto">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add Class Slot
+              </button>
+            </div>
+
+            <!-- Weekly Grid -->
+            <div class="overflow-x-auto">
+              <div class="min-w-[720px] grid grid-cols-6 gap-2.5">
+                ${DAYS.map(day => {
+                  const slots = state.timetable
+                    .filter(s => s.day === day && (ui.selectedCourseId === 'all' || s.courseId === ui.selectedCourseId))
+                    .sort((a, b) => a.start.localeCompare(b.start));
+                  const isToday = day === getTodayName();
+                  return `
+                    <div class="flex flex-col gap-2">
+                      <div class="px-2.5 py-2 rounded-xl text-xs font-bold text-center ${isToday ? 'btn-accent' : 'subtle'}">${esc(day)}</div>
+                      <div class="flex flex-col gap-2 min-h-[160px]">
+                        ${slots.length === 0 ? `<div class="p-3 rounded-xl border border-dashed border-theme text-[11px] text-muted text-center">Free</div>` : slots.map(slot => {
+                          const c = getCourse(slot.courseId);
+                          const color = c ? c.color : '#64748b';
+                          return `
+                            <div class="p-2.5 rounded-xl subtle border-l-4 flex flex-col gap-1 cursor-pointer hover:opacity-90 transition" style="border-left-color:${esc(color)}" data-action="edit-item" data-kind="timetable" data-id="${esc(slot.id)}">
+                              <div class="text-[11px] font-bold" style="color:${esc(color)}">${esc(slot.start)}–${esc(slot.end)}</div>
+                              <div class="text-xs font-semibold leading-snug">${c ? esc(c.code) : 'Class'} • ${esc(slot.type)}</div>
+                              <div class="text-[11px] text-muted truncate">${c ? esc(c.name) : ''}</div>
+                              <div class="text-[10px] text-muted">Room ${esc(slot.room || 'TBA')}</div>
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderCoursesView() {
+        const cf = ui.selectedCourseId;
+        const syllabusList = state.syllabus.filter(s => cf === 'all' || s.courseId === cf);
+        const tutList = state.tutSheets.filter(ts => cf === 'all' || ts.courseId === cf);
+        const booksList = state.books.filter(b => cf === 'all' || b.courseId === cf);
+        const notesList = state.notes.filter(n => cf === 'all' || n.courseId === cf);
+
+        return `
+          <div class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h1 class="text-xl font-bold">Courses &amp; Study Materials</h1>
+                <p class="text-xs text-muted">Manage courses, syllabus units, tut sheets, textbooks, and notes.</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" data-action="open-add" data-kind="course" class="px-3 py-1.5 rounded-xl text-xs font-medium surface border border-theme hover:opacity-80">+ Course</button>
+                <button type="button" data-action="open-add" data-kind="syllabus" class="px-3 py-1.5 rounded-xl text-xs font-medium surface border border-theme hover:opacity-80">+ Syllabus</button>
+                <button type="button" data-action="open-add" data-kind="tutSheet" class="px-3 py-1.5 rounded-xl text-xs font-medium surface border border-theme hover:opacity-80">+ Tut Sheet</button>
+                <button type="button" data-action="open-add" data-kind="book" class="btn-accent px-3 py-1.5 rounded-xl text-xs font-medium">+ Book</button>
+              </div>
+            </div>
+
+            <!-- Course Cards Strip -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+              ${state.courses.map(c => {
+                const selected = ui.selectedCourseId === c.id;
+                const sylDone = state.syllabus.filter(s => s.courseId === c.id && s.completed).length;
+                const sylTotal = state.syllabus.filter(s => s.courseId === c.id).length;
+                return `
+                  <div class="p-3.5 rounded-xl border transition cursor-pointer ${selected ? 'ring-2 ring-indigo-500 surface' : 'subtle border-theme'}" data-action="filter-course" data-course="${selected ? 'all' : esc(c.id)}">
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="px-2 py-0.5 text-[11px] font-bold text-white rounded-md" style="background-color:${esc(c.color)}">${esc(c.code)}</span>
+                      <div class="flex items-center gap-1">
+                        <button type="button" data-action="edit-item" data-kind="course" data-id="${esc(c.id)}" class="p-1 rounded hover:bg-black/10 text-muted" title="Edit course">
+                          <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="font-semibold text-sm mt-2 truncate">${esc(c.name)}</div>
+                    <div class="text-xs text-muted truncate">${esc(c.instructor)} • ${c.credits} Cr</div>
+                    <div class="text-[11px] text-muted mt-2">Syllabus: ${sylDone}/${sylTotal} units</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- Sub-tabs -->
+            <div class="flex flex-wrap gap-1.5 border-b border-theme pb-2">
+              ${[
+                { id: 'all', label: 'All Materials' },
+                { id: 'syllabus', label: `Syllabus (${syllabusList.length})` },
+                { id: 'tutSheets', label: `Tut Sheets (${tutList.length})` },
+                { id: 'books', label: `Books (${booksList.length})` },
+                { id: 'notes', label: `Course Notes (${notesList.length})` }
+              ].map(tab => `
+                <button type="button" data-action="course-subtab" data-tab="${tab.id}" class="px-3 py-1.5 rounded-xl text-xs font-medium transition ${ui.courseSubTab === tab.id ? 'btn-accent' : 'subtle text-muted hover:text-current'}">${esc(tab.label)}</button>
+              `).join('')}
+            </div>
+
+            ${(ui.courseSubTab === 'all' || ui.courseSubTab === 'syllabus') ? `
+              <div class="flex flex-col gap-2">
+                <h2 class="text-sm font-bold flex items-center gap-2"><i data-lucide="list-checks" class="w-4 h-4" style="color: var(--accent)"></i> Syllabus Units</h2>
+                ${syllabusList.length === 0 ? `<div class="text-xs text-muted">No syllabus units yet.</div>` : syllabusList.map(s => `
+                  <div class="p-3 rounded-xl subtle flex items-center justify-between gap-3">
+                    <label class="flex items-start gap-2.5 cursor-pointer flex-1 min-w-0">
+                      <input type="checkbox" ${s.completed ? 'checked' : ''} data-action="toggle-syllabus" data-id="${esc(s.id)}" class="mt-0.5 w-4 h-4 rounded accent-indigo-600 shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold ${s.completed ? 'line-through text-muted' : ''}">${esc(s.unit)}</div>
+                        <div class="text-xs text-muted">${esc(s.topics)}</div>
+                      </div>
+                    </label>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      ${courseBadge(s.courseId)}
+                      <button type="button" data-action="edit-item" data-kind="syllabus" data-id="${esc(s.id)}" class="p-1 rounded hover:bg-black/10 text-muted"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                      <button type="button" data-action="delete-item" data-kind="syllabus" data-id="${esc(s.id)}" class="p-1 rounded hover:bg-rose-500/15 text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+
+            ${(ui.courseSubTab === 'all' || ui.courseSubTab === 'tutSheets') ? `
+              <div class="flex flex-col gap-2 pt-2">
+                <h2 class="text-sm font-bold flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4" style="color: var(--accent)"></i> Tutorial (Tut) Sheets</h2>
+                ${tutList.length === 0 ? `<div class="text-xs text-muted">No tut sheets yet.</div>` : tutList.map(ts => `
+                  <div class="p-3 rounded-xl subtle flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded surface border border-theme">${esc(ts.sheetNo)}</span>
+                        <span class="text-sm font-semibold">${esc(ts.title)}</span>
+                        ${courseBadge(ts.courseId)}
+                      </div>
+                      ${ts.notes ? `<div class="text-xs text-muted mt-1">${esc(ts.notes)}</div>` : ''}
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <button type="button" data-action="cycle-tut-status" data-id="${esc(ts.id)}" class="px-2.5 py-1 rounded-lg text-xs font-semibold ${ts.status === 'Completed' ? 'bg-emerald-500/15 text-emerald-600' : ts.status === 'In Progress' ? 'bg-amber-500/15 text-amber-600' : 'bg-slate-500/15 text-muted'}">${esc(ts.status)}</button>
+                      ${ts.url ? `<a href="${esc(ts.url)}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg surface border border-theme hover:opacity-80" title="Open Sheet"><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>` : ''}
+                      <button type="button" data-action="edit-item" data-kind="tutSheet" data-id="${esc(ts.id)}" class="p-1 rounded hover:bg-black/10 text-muted"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                      <button type="button" data-action="delete-item" data-kind="tutSheet" data-id="${esc(ts.id)}" class="p-1 rounded hover:bg-rose-500/15 text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+
+            ${(ui.courseSubTab === 'all' || ui.courseSubTab === 'books') ? `
+              <div class="flex flex-col gap-2 pt-2">
+                <h2 class="text-sm font-bold flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4" style="color: var(--accent)"></i> Books &amp; Textbooks</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                  ${booksList.length === 0 ? `<div class="text-xs text-muted">No books added yet.</div>` : booksList.map(b => `
+                    <div class="p-3.5 rounded-xl subtle flex flex-col justify-between gap-2">
+                      <div>
+                        <div class="flex items-start justify-between gap-2">
+                          <div class="text-sm font-semibold">${esc(b.title)}</div>
+                          ${courseBadge(b.courseId)}
+                        </div>
+                        <div class="text-xs text-muted mt-0.5">${esc(b.author)}${b.edition ? ' • ' + esc(b.edition) : ''}</div>
+                      </div>
+                      <div class="flex items-center justify-between pt-2 border-t border-theme text-xs">
+                        <span class="font-medium text-muted">${esc(b.status || 'Reference')}</span>
+                        <div class="flex items-center gap-1.5">
+                          ${b.url ? `<a href="${esc(b.url)}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 rounded-lg surface border border-theme hover:opacity-80 flex items-center gap-1">Open <i data-lucide="external-link" class="w-3 h-3"></i></a>` : ''}
+                          <button type="button" data-action="edit-item" data-kind="book" data-id="${esc(b.id)}" class="p-1 rounded hover:bg-black/10 text-muted"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                          <button type="button" data-action="delete-item" data-kind="book" data-id="${esc(b.id)}" class="p-1 rounded hover:bg-rose-500/15 text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            ${(ui.courseSubTab === 'all' || ui.courseSubTab === 'notes') ? `
+              <div class="flex flex-col gap-2 pt-2">
+                <h2 class="text-sm font-bold flex items-center gap-2"><i data-lucide="notebook-pen" class="w-4 h-4" style="color: var(--accent)"></i> Course Notes</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                  ${notesList.map(n => `
+                    <div class="p-3.5 rounded-xl subtle flex flex-col gap-1.5 cursor-pointer" data-action="edit-item" data-kind="note" data-id="${esc(n.id)}">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="text-sm font-semibold truncate">${esc(n.title)}</span>
+                        ${courseBadge(n.courseId)}
+                      </div>
+                      <p class="text-xs text-muted line-clamp-2 whitespace-pre-line">${esc(n.content)}</p>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+
+      function renderNotesView() {
+        const list = state.notes.filter(n => ui.selectedCourseId === 'all' || n.courseId === ui.selectedCourseId);
+        return `
+          <div class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h1 class="text-xl font-bold">Notes</h1>
+                <p class="text-xs text-muted">Capture lecture summaries, exam formulas, and quick thoughts.</p>
+              </div>
+              <button type="button" data-action="open-add" data-kind="note" class="btn-accent px-3.5 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 self-start sm:self-auto">
+                <i data-lucide="plus" class="w-4 h-4"></i> New Note
+              </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${list.length === 0 ? `<div class="col-span-full py-10 text-center text-sm text-muted">No notes yet. Create one to get started!</div>` : list.map(n => `
+                <div class="p-4 rounded-xl subtle flex flex-col justify-between gap-3">
+                  <div>
+                    <div class="flex items-start justify-between gap-2">
+                      <div class="font-semibold text-sm">${esc(n.title)}</div>
+                      <div class="flex items-center gap-1 shrink-0">
+                        <button type="button" data-action="toggle-pin-note" data-id="${esc(n.id)}" class="p-1 rounded hover:bg-black/10 ${n.pinned ? 'text-amber-500' : 'text-muted'}" title="Pin note">
+                          <i data-lucide="pin" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button type="button" data-action="edit-item" data-kind="note" data-id="${esc(n.id)}" class="p-1 rounded hover:bg-black/10 text-muted"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                        <button type="button" data-action="delete-item" data-kind="note" data-id="${esc(n.id)}" class="p-1 rounded hover:bg-rose-500/15 text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                      </div>
+                    </div>
+                    <p class="text-xs text-muted mt-2 whitespace-pre-line">${esc(n.content)}</p>
+                  </div>
+                  <div class="flex items-center justify-between gap-2 pt-2 border-t border-theme text-[11px] text-muted">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      ${courseBadge(n.courseId)}
+                      ${(n.tags || []).map(tag => `<span class="px-1.5 py-0.5 rounded surface border border-theme">#${esc(tag)}</span>`).join('')}
+                    </div>
+                    <span>${esc(n.updated || '')}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderLinksView() {
+        const list = state.links.filter(l => ui.selectedCourseId === 'all' || l.courseId === ui.selectedCourseId);
+        return `
+          <div class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h1 class="text-xl font-bold">Important Links</h1>
+                <p class="text-xs text-muted">All your portals, LMS, libraries, and course resources in one place.</p>
+              </div>
+              <button type="button" data-action="open-add" data-kind="link" class="btn-accent px-3.5 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 self-start sm:self-auto">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add Link
+              </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${list.length === 0 ? `<div class="col-span-full py-10 text-center text-sm text-muted">No links saved yet.</div>` : list.map(l => `
+                <div class="p-4 rounded-xl subtle flex flex-col justify-between gap-2.5">
+                  <div>
+                    <div class="flex items-start justify-between gap-2">
+                      <div class="min-w-0">
+                        <div class="font-semibold text-sm truncate">${esc(l.title)}</div>
+                        <div class="text-xs text-muted truncate">${esc(l.url)}</div>
+                      </div>
+                      <div class="flex items-center gap-1 shrink-0">
+                        <button type="button" data-action="copy-url" data-url="${esc(l.url)}" class="p-1.5 rounded-lg hover:bg-black/10 text-muted" title="Copy URL"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                        <button type="button" data-action="edit-item" data-kind="link" data-id="${esc(l.id)}" class="p-1.5 rounded-lg hover:bg-black/10 text-muted" title="Edit"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                        <button type="button" data-action="delete-item" data-kind="link" data-id="${esc(l.id)}" class="p-1.5 rounded-lg hover:bg-rose-500/15 text-rose-500" title="Delete"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                      </div>
+                    </div>
+                    ${l.description ? `<p class="text-xs text-muted mt-1.5">${esc(l.description)}</p>` : ''}
+                  </div>
+                  <div class="flex items-center justify-between pt-2 border-t border-theme">
+                    <div class="flex items-center gap-1.5">
+                      <span class="px-2 py-0.5 text-[11px] rounded-full surface border border-theme font-medium">${esc(l.category)}</span>
+                      ${l.courseId ? courseBadge(l.courseId) : ''}
+                    </div>
+                    <a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" class="btn-accent px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+                      Open <i data-lucide="external-link" class="w-3 h-3"></i>
+                    </a>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderSearchView() {
+        const q = ui.searchQuery.trim();
+        const allResults = q ? runGlobalSearch(q) : [];
+        const filtered = ui.searchCategory === 'all' ? allResults : allResults.filter(r => r.type === ui.searchCategory);
+        const cats = [
+          { id: 'all', label: 'All' },
+          { id: 'task', label: 'Tasks' },
+          { id: 'timetable', label: 'Timetable' },
+          { id: 'note', label: 'Notes' },
+          { id: 'book', label: 'Books' },
+          { id: 'syllabus', label: 'Syllabus' },
+          { id: 'tutSheet', label: 'Tut Sheets' },
+          { id: 'link', label: 'Links' },
+          { id: 'course', label: 'Courses' }
+        ];
+
+        return `
+          <div class="surface border border-theme rounded-2xl p-5 card-pad flex flex-col gap-4">
+            <div>
+              <h1 class="text-xl font-bold">Search Everything</h1>
+              <p class="text-xs text-muted">Instant results across tasks, timetable, notes, books, syllabus, tut sheets, courses, and links.</p>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              ${cats.map(c => `
+                <button type="button" data-action="search-cat" data-cat="${c.id}" class="px-3 py-1.5 rounded-xl text-xs font-medium ${ui.searchCategory === c.id ? 'btn-accent' : 'subtle text-muted'}">${esc(c.label)}</button>
+              `).join('')}
+            </div>
+            ${!q ? `<div class="py-10 text-center text-sm text-muted">Type anything in the search bar above (e.g., "Dijkstra", "Urgent", "Tut Sheet", "Moodle", "Monday").</div>` :
+              filtered.length === 0 ? `<div class="py-10 text-center text-sm text-muted">No matching items for "<strong>${esc(q)}</strong>".</div>` : `
+                <div class="flex flex-col gap-2">
+                  ${filtered.map(r => `
+                    <div class="p-3.5 rounded-xl subtle flex items-center justify-between gap-3 cursor-pointer hover:opacity-90" data-action="jump-result" data-view="${esc(r.view)}" data-subtab="${esc(r.subTab || '')}" data-id="${esc(r.id)}" data-type="${esc(r.type)}">
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold truncate">${esc(r.title)}</div>
+                        <div class="text-xs text-muted truncate">${esc(r.subtitle)}</div>
+                      </div>
+                      <div class="flex items-center gap-2 shrink-0">
+                        <span class="px-2.5 py-0.5 text-[11px] font-semibold rounded-full badge-accent">${esc(r.typeLabel)}</span>
+                        ${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg surface border border-theme" onclick="event.stopPropagation()"><i data-lucide="external-link" class="w-3.5 h-3.5"></i></a>` : ''}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              `
+            }
+          </div>
+        `;
+      }
+
+      // Modal Builders (Add / Edit / Customize)
+      function openModal(title, html) {
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalBody').innerHTML = html;
+        document.getElementById('appModal').classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function closeModal() {
+        document.getElementById('appModal').classList.add('hidden');
+      }
+
+      function courseOptionsHTML(selectedId) {
+        return `<option value="">General / No Course</option>` + state.courses.map(c => `<option value="${esc(c.id)}" ${selectedId === c.id ? 'selected' : ''}>${esc(c.code)} — ${esc(c.name)}</option>`).join('');
+      }
+
+      function openItemModal(kind, id) {
+        const isEdit = !!id;
+        let item = {};
+        if (isEdit) {
+          const map = { task: 'tasks', timetable: 'timetable', course: 'courses', syllabus: 'syllabus', tutSheet: 'tutSheets', book: 'books', note: 'notes', link: 'links' };
+          item = state[map[kind]].find(x => x.id === id) || {};
+        }
+
+        if (kind === 'quick') {
+          openModal('Quick Add to Helper', `
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              ${[
+                { k: 'task', l: 'Task / Work', i: 'check-square' },
+                { k: 'timetable', l: 'Class Slot', i: 'calendar-clock' },
+                { k: 'note', l: 'Note', i: 'notebook-pen' },
+                { k: 'link', l: 'Important Link', i: 'link' },
+                { k: 'tutSheet', l: 'Tut Sheet', i: 'file-spreadsheet' },
+                { k: 'book', l: 'Book', i: 'book-open' },
+                { k: 'syllabus', l: 'Syllabus Unit', i: 'list-checks' },
+                { k: 'course', l: 'Course', i: 'graduation-cap' }
+              ].map(x => `
+                <button type="button" data-action="open-add" data-kind="${x.k}" class="p-3 rounded-xl subtle hover:opacity-85 flex flex-col items-center gap-2 text-center">
+                  <i data-lucide="${x.i}" class="w-5 h-5" style="color: var(--accent)"></i>
+                  <span class="text-xs font-semibold">${x.l}</span>
+                </button>
+              `).join('')}
+            </div>
+          `);
+          return;
+        }
+
+        let formHtml = '';
+        if (kind === 'task') {
+          formHtml = `
+            <form id="itemForm" data-kind="task" data-id="${esc(id || '')}" class="flex flex-col gap-3">
+              <div><label class="text-xs font-medium text-muted">Title</label><input name="title" required value="${esc(item.title || '')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Cadence</label><select name="cadence" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle"><option value="daily" ${item.cadence === 'daily' ? 'selected' : ''}>Daily</option><option value="weekly" ${item.cadence === 'weekly' ? 'selected' : ''}>Weekly</option></select></div>
+                <div><label class="text-xs font-medium text-muted">Urgency</label><select name="urgency" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle"><option value="urgent" ${item.urgency === 'urgent' ? 'selected' : ''}>Urgent</option><option value="non-urgent" ${item.urgency === 'non-urgent' ? 'selected' : ''}>Non-Urgent</option></select></div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Course</label><select name="courseId" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${courseOptionsHTML(item.courseId)}</select></div>
+                <div><label class="text-xs font-medium text-muted">Due / Schedule</label><input name="due" value="${esc(item.due || '')}" placeholder="e.g. Today, 8:00 PM" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              </div>
+              <div><label class="text-xs font-medium text-muted">Notes</label><textarea name="notes" rows="2" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${esc(item.notes || '')}</textarea></div>
+              <button type="submit" class="btn-accent py-2.5 rounded-xl text-sm font-semibold mt-1">${isEdit ? 'Save Changes' : 'Add Task'}</button>
+            </form>
+          `;
+        } else if (kind === 'timetable') {
+          formHtml = `
+            <form id="itemForm" data-kind="timetable" data-id="${esc(id || '')}" class="flex flex-col gap-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Day</label><select name="day" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${DAYS.map(d => `<option ${item.day === d ? 'selected' : ''}>${d}</option>`).join('')}</select></div>
+                <div><label class="text-xs font-medium text-muted">Course</label><select name="courseId" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${courseOptionsHTML(item.courseId)}</select></div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Start Time</label><input name="start" required value="${esc(item.start || '09:00')}" placeholder="09:00" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+                <div><label class="text-xs font-medium text-muted">End Time</label><input name="end" required value="${esc(item.end || '10:00')}" placeholder="10:00" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Type</label><select name="type" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${['Lecture', 'Lab', 'Tutorial', 'Seminar'].map(t => `<option ${item.type === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+                <div><label class="text-xs font-medium text-muted">Room</label><input name="room" value="${esc(item.room || '')}" placeholder="LH-102" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              </div>
+              <div class="flex gap-2 mt-1">
+                <button type="submit" class="flex-1 btn-accent py-2.5 rounded-xl text-sm font-semibold">${isEdit ? 'Save Slot' : 'Add Slot'}</button>
+                ${isEdit ? `<button type="button" data-action="delete-item" data-kind="timetable" data-id="${esc(id)}" class="px-4 py-2.5 rounded-xl bg-rose-500/15 text-rose-500 text-sm font-semibold">Delete</button>` : ''}
+              </div>
+            </form>
+          `;
+        } else if (kind === 'course') {
+          formHtml = `
+            <form id="itemForm" data-kind="course" data-id="${esc(id || '')}" class="flex flex-col gap-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Course Code</label><input name="code" required value="${esc(item.code || '')}" placeholder="CS301" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+                <div><label class="text-xs font-medium text-muted">Credits</label><input name="credits" type="number" value="${esc(item.credits || 3)}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              </div>
+              <div><label class="text-xs font-medium text-muted">Course Name</label><input name="name" required value="${esc(item.name || '')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Instructor</label><input name="instructor" value="${esc(item.instructor || '')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+                <div><label class="text-xs font-medium text-muted">Color</label><input name="color" type="color" value="${esc(item.color || '#4f46e5')}" class="mt-1 w-full h-10 p-1 rounded-xl border border-theme subtle" /></div>
+              </div>
+              <div class="flex gap-2 mt-1">
+                <button type="submit" class="flex-1 btn-accent py-2.5 rounded-xl text-sm font-semibold">${isEdit ? 'Save Course' : 'Add Course'}</button>
+                ${isEdit ? `<button type="button" data-action="delete-item" data-kind="course" data-id="${esc(id)}" class="px-4 py-2.5 rounded-xl bg-rose-500/15 text-rose-500 text-sm font-semibold">Delete</button>` : ''}
+              </div>
+            </form>
+          `;
+        } else if (kind === 'syllabus') {
+          formHtml = `
+            <form id="itemForm" data-kind="syllabus" data-id="${esc(id || '')}" class="flex flex-col gap-3">
+              <div><label class="text-xs font-medium text-muted">Course</label><select name="courseId" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${courseOptionsHTML(item.courseId)}</select></div>
+              <div><label class="text-xs font-medium text-muted">Unit / Module</label><input name="unit" required value="${esc(item.unit || '')}" placeholder="Unit 3: Graph Algorithms" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <div><label class="text-xs font-medium text-muted">Topics</label><textarea name="topics" rows="3" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${esc(item.topics || '')}</textarea></div>
+              <button type="submit" class="btn-accent py-2.5 rounded-xl text-sm font-semibold mt-1">${isEdit ? 'Save Unit' : 'Add Syllabus Unit'}</button>
+            </form>
+          `;
+        } else if (kind === 'tutSheet') {
+          formHtml = `
+            <form id="itemForm" data-kind="tutSheet" data-id="${esc(id || '')}" class="flex flex-col gap-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Sheet No.</label><input name="sheetNo" required value="${esc(item.sheetNo || 'TS-01')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+                <div><label class="text-xs font-medium text-muted">Course</label><select name="courseId" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${courseOptionsHTML(item.courseId)}</select></div>
+              </div>
+              <div><label class="text-xs font-medium text-muted">Title</label><input name="title" required value="${esc(item.title || '')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Status</label><select name="status" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${['Pending', 'In Progress', 'Completed'].map(s => `<option ${item.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
+                <div><label class="text-xs font-medium text-muted">Link (optional)</label><input name="url" value="${esc(item.url || '')}" placeholder="https://..." class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              </div>
+              <div><label class="text-xs font-medium text-muted">Notes</label><textarea name="notes" rows="2" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${esc(item.notes || '')}</textarea></div>
+              <button type="submit" class="btn-accent py-2.5 rounded-xl text-sm font-semibold mt-1">${isEdit ? 'Save Tut Sheet' : 'Add Tut Sheet'}</button>
+            </form>
+          `;
+        } else if (kind === 'book') {
+          formHtml = `
+            <form id="itemForm" data-kind="book" data-id="${esc(id || '')}" class="flex flex-col gap-3">
+              <div><label class="text-xs font-medium text-muted">Book Title</label><input name="title" required value="${esc(item.title || '')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Author</label><input name="author" value="${esc(item.author || '')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+                <div><label class="text-xs font-medium text-muted">Edition</label><input name="edition" value="${esc(item.edition || '')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Course</label><select name="courseId" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${courseOptionsHTML(item.courseId)}</select></div>
+                <div><label class="text-xs font-medium text-muted">Reading Status</label><input name="status" value="${esc(item.status || 'Reference')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              </div>
+              <div><label class="text-xs font-medium text-muted">URL (optional)</label><input name="url" value="${esc(item.url || '')}" placeholder="https://..." class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <button type="submit" class="btn-accent py-2.5 rounded-xl text-sm font-semibold mt-1">${isEdit ? 'Save Book' : 'Add Book'}</button>
+            </form>
+          `;
+        } else if (kind === 'note') {
+          formHtml = `
+            <form id="itemForm" data-kind="note" data-id="${esc(id || '')}" class="flex flex-col gap-3">
+              <div><label class="text-xs font-medium text-muted">Title</label><input name="title" required value="${esc(item.title || '')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Course</label><select name="courseId" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${courseOptionsHTML(item.courseId)}</select></div>
+                <div><label class="text-xs font-medium text-muted">Tags (comma separated)</label><input name="tags" value="${esc((item.tags || []).join(', '))}" placeholder="exam, formulas" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              </div>
+              <div><label class="text-xs font-medium text-muted">Content</label><textarea name="content" rows="5" required class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${esc(item.content || '')}</textarea></div>
+              <label class="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" name="pinned" ${item.pinned ? 'checked' : ''} class="w-4 h-4 rounded" /> Pin to Dashboard</label>
+              <button type="submit" class="btn-accent py-2.5 rounded-xl text-sm font-semibold mt-1">${isEdit ? 'Save Note' : 'Create Note'}</button>
+            </form>
+          `;
+        } else if (kind === 'link') {
+          formHtml = `
+            <form id="itemForm" data-kind="link" data-id="${esc(id || '')}" class="flex flex-col gap-3">
+              <div><label class="text-xs font-medium text-muted">Title</label><input name="title" required value="${esc(item.title || '')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <div><label class="text-xs font-medium text-muted">URL</label><input name="url" type="url" required value="${esc(item.url || 'https://')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-xs font-medium text-muted">Category</label><input name="category" value="${esc(item.category || 'Academics')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+                <div><label class="text-xs font-medium text-muted">Course</label><select name="courseId" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle">${courseOptionsHTML(item.courseId)}</select></div>
+              </div>
+              <div><label class="text-xs font-medium text-muted">Description</label><input name="description" value="${esc(item.description || '')}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <label class="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" name="pinned" ${item.pinned ? 'checked' : ''} class="w-4 h-4 rounded" /> Pin to Dashboard</label>
+              <button type="submit" class="btn-accent py-2.5 rounded-xl text-sm font-semibold mt-1">${isEdit ? 'Save Link' : 'Add Link'}</button>
+            </form>
+          `;
+        }
+
+        openModal((isEdit ? 'Edit ' : 'Add ') + kind.replace(/([A-Z])/g, ' $1'), formHtml);
+      }
+
+      function openCustomizeModal() {
+        const s = state.settings;
+        openModal('Customize Helper', `
+          <form id="customizeForm" class="flex flex-col gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div><label class="text-xs font-medium text-muted">App Name</label><input name="appTitle" value="${esc(s.appTitle)}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+              <div><label class="text-xs font-medium text-muted">Your Name</label><input name="userName" value="${esc(s.userName)}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+            </div>
+            <div><label class="text-xs font-medium text-muted">Subtitle / Semester</label><input name="subtitle" value="${esc(s.subtitle)}" class="mt-1 w-full px-3 py-2 text-sm rounded-xl border border-theme subtle" /></div>
+
+            <div>
+              <div class="text-xs font-medium text-muted mb-1.5">Theme</div>
+              <div class="grid grid-cols-4 gap-2">
+                ${[{id:'light',l:'Light'},{id:'warm',l:'Warm'},{id:'dark',l:'Dark'},{id:'slate',l:'Slate'}].map(t => `
+                  <label class="cursor-pointer p-2 rounded-xl border border-theme subtle text-center text-xs font-medium flex items-center justify-center gap-1.5">
+                    <input type="radio" name="theme" value="${t.id}" ${s.theme === t.id ? 'checked' : ''} /> ${t.l}
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs font-medium text-muted mb-1.5">Accent Color</div>
+              <div class="flex flex-wrap gap-2">
+                ${Object.entries(ACCENTS).map(([k, v]) => `
+                  <label class="cursor-pointer flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-theme subtle text-xs capitalize">
+                    <input type="radio" name="accent" value="${k}" ${s.accent === k ? 'checked' : ''} />
+                    <span class="w-3 h-3 rounded-full" style="background-color:${v.hex}"></span> ${k}
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs font-medium text-muted mb-1.5">Dashboard Widgets</div>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                ${[
+                  { k: 'schedule', l: "Today's Schedule" },
+                  { k: 'urgent', l: 'Urgent Works' },
+                  { k: 'tasks', l: 'Daily & Weekly Queue' },
+                  { k: 'links', l: 'Important Links' },
+                  { k: 'notes', l: 'Pinned Notes' }
+                ].map(w => `
+                  <label class="flex items-center gap-2 p-2 rounded-xl subtle cursor-pointer">
+                    <input type="checkbox" name="w_${w.k}" ${s.widgets[w.k] ? 'checked' : ''} /> ${w.l}
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+
+            <label class="flex items-center gap-2 text-xs font-medium cursor-pointer">
+              <input type="checkbox" name="compact" ${s.compact ? 'checked' : ''} /> Compact Layout Density
+            </label>
+
+            <button type="submit" class="btn-accent py-2.5 rounded-xl text-sm font-semibold">Apply Customization</button>
+
+            <div class="border-t border-theme pt-3 flex flex-wrap items-center justify-between gap-2">
+              <div class="flex gap-2">
+                <button type="button" id="exportDataBtn" class="px-3 py-1.5 rounded-xl text-xs font-medium surface border border-theme hover:opacity-80">Export JSON</button>
+                <label class="px-3 py-1.5 rounded-xl text-xs font-medium surface border border-theme hover:opacity-80 cursor-pointer">
+                  Import JSON <input type="file" id="importDataInput" accept=".json" class="hidden" />
+                </label>
+              </div>
+              <button type="button" id="resetSampleBtn" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-rose-500/15 text-rose-500">Reset Sample Data</button>
+            </div>
+          </form>
+        `);
+      }
+
+      // Event Delegation
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) {
+          if (!e.target.closest('#globalSearchInput') && !e.target.closest('#searchDropdown')) {
+            document.getElementById('searchDropdown').classList.add('hidden');
+          }
+          return;
+        }
+        const action = btn.dataset.action;
+
+        if (action === 'nav') {
+          ui.activeView = btn.dataset.view;
+          document.getElementById('mobileDrawer').classList.add('hidden');
+          document.getElementById('searchDropdown').classList.add('hidden');
+          renderNav();
+          renderMain();
+        } else if (action === 'filter-course') {
+          ui.selectedCourseId = btn.dataset.course;
+          document.getElementById('mobileDrawer').classList.add('hidden');
+          renderNav();
+          renderMain();
+        } else if (action === 'task-filter') {
+          const f = btn.dataset.filter;
+          if (f === 'cadence') ui.taskCadenceFilter = btn.dataset.val;
+          if (f === 'urgency') ui.taskUrgencyFilter = btn.dataset.val;
+          if (f === 'status') ui.taskStatusFilter = btn.dataset.val;
+          renderMain();
+        } else if (action === 'course-subtab') {
+          ui.courseSubTab = btn.dataset.tab;
+          renderMain();
+        } else if (action === 'search-cat') {
+          ui.searchCategory = btn.dataset.cat;
+          renderMain();
+        } else if (action === 'open-search-view') {
+          ui.activeView = 'search';
+          document.getElementById('searchDropdown').classList.add('hidden');
+          renderNav();
+          renderMain();
+        } else if (action === 'jump-result') {
+          ui.activeView = btn.dataset.view;
+          if (btn.dataset.subtab) ui.courseSubTab = btn.dataset.subtab;
+          document.getElementById('searchDropdown').classList.add('hidden');
+          renderNav();
+          renderMain();
+        } else if (action === 'open-add') {
+          openItemModal(btn.dataset.kind);
+        } else if (action === 'edit-item') {
+          e.stopPropagation();
+          openItemModal(btn.dataset.kind, btn.dataset.id);
+        } else if (action === 'delete-item') {
+          e.stopPropagation();
+          const kind = btn.dataset.kind;
+          const id = btn.dataset.id;
+          const map = { task: 'tasks', timetable: 'timetable', course: 'courses', syllabus: 'syllabus', tutSheet: 'tutSheets', book: 'books', note: 'notes', link: 'links' };
+          state[map[kind]] = state[map[kind]].filter(x => x.id !== id);
+          if (kind === 'course' && ui.selectedCourseId === id) ui.selectedCourseId = 'all';
+          saveState();
+          closeModal();
+          renderNav();
+          renderMain();
+          showToast('Item deleted');
+        } else if (action === 'cycle-tut-status') {
+          const ts = state.tutSheets.find(x => x.id === btn.dataset.id);
+          if (ts) {
+            const order = ['Pending', 'In Progress', 'Completed'];
+            ts.status = order[(order.indexOf(ts.status) + 1) % order.length];
+            saveState();
+            renderNav();
+            renderMain();
+          }
+        } else if (action === 'toggle-pin-note') {
+          const n = state.notes.find(x => x.id === btn.dataset.id);
+          if (n) {
+            n.pinned = !n.pinned;
+            saveState();
+            renderMain();
+          }
+        } else if (action === 'copy-url') {
+          const url = btn.dataset.url;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(() => showToast('Link copied')).catch(() => fallbackCopy(url));
+          } else {
+            fallbackCopy(url);
+          }
+        }
+      });
+
+      function fallbackCopy(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); showToast('Link copied'); } catch (e) {}
+        ta.remove();
+      }
+
+      document.addEventListener('change', (e) => {
+        const el = e.target;
+        if (el.dataset.action === 'toggle-task') {
+          const t = state.tasks.find(x => x.id === el.dataset.id);
+          if (t) {
+            t.done = el.checked;
+            saveState();
+            renderNav();
+            renderMain();
+          }
+        } else if (el.dataset.action === 'toggle-syllabus') {
+          const s = state.syllabus.find(x => x.id === el.dataset.id);
+          if (s) {
+            s.completed = el.checked;
+            saveState();
+            renderMain();
+          }
+        } else if (el.id === 'importDataInput' && el.files && el.files[0]) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const parsed = JSON.parse(reader.result);
+              if (parsed && parsed.courses && parsed.tasks) {
+                state = parsed;
+                saveState();
+                applyTheme();
+                closeModal();
+                renderNav();
+                renderMain();
+                showToast('Data imported successfully');
+              }
+            } catch (err) {
+              showToast('Invalid JSON file');
+            }
+          };
+          reader.readAsText(el.files[0]);
+        }
+      });
+
+      document.addEventListener('submit', (e) => {
+        if (e.target.id === 'itemForm') {
+          e.preventDefault();
+          const form = e.target;
+          const kind = form.dataset.kind;
+          const id = form.dataset.id;
+          const fd = new FormData(form);
+          const data = Object.fromEntries(fd.entries());
+
+          if (kind === 'note') {
+            data.pinned = !!form.querySelector('[name="pinned"]').checked;
+            data.tags = (data.tags || '').split(',').map(s => s.trim()).filter(Boolean);
+            data.updated = new Date().toISOString().slice(0, 10);
+          }
+          if (kind === 'link') {
+            data.pinned = !!form.querySelector('[name="pinned"]').checked;
+          }
+          if (kind === 'course') {
+            data.credits = Number(data.credits) || 3;
+          }
+
+          const map = { task: 'tasks', timetable: 'timetable', course: 'courses', syllabus: 'syllabus', tutSheet: 'tutSheets', book: 'books', note: 'notes', link: 'links' };
+          const arr = state[map[kind]];
+          if (id) {
+            const idx = arr.findIndex(x => x.id === id);
+            if (idx !== -1) arr[idx] = { ...arr[idx], ...data };
+          } else {
+            const defaults = kind === 'task' ? { done: false } : kind === 'syllabus' ? { completed: false } : {};
+            arr.unshift({ id: uid(kind), ...defaults, ...data });
+          }
+          saveState();
+          closeModal();
+          renderNav();
+          renderMain();
+          showToast(id ? 'Updated successfully' : 'Added to Helper');
+        } else if (e.target.id === 'customizeForm') {
+          e.preventDefault();
+          const form = e.target;
+          const fd = new FormData(form);
+          state.settings.appTitle = fd.get('appTitle') || 'Helper';
+          state.settings.userName = fd.get('userName') || 'Student';
+          state.settings.subtitle = fd.get('subtitle') || '';
+          state.settings.theme = fd.get('theme') || 'light';
+          state.settings.accent = fd.get('accent') || 'indigo';
+          state.settings.compact = !!form.querySelector('[name="compact"]').checked;
+          ['schedule', 'urgent', 'tasks', 'links', 'notes'].forEach(k => {
+            state.settings.widgets[k] = !!form.querySelector(`[name="w_${k}"]`).checked;
+          });
+          saveState();
+          applyTheme();
+          closeModal();
+          renderNav();
+          renderMain();
+          showToast('Customization saved');
+        }
+      });
+
+      document.getElementById('modalBody').addEventListener('click', (e) => {
+        if (e.target.id === 'exportDataBtn') {
+          const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'helper-backup.json';
+          a.click();
+          URL.revokeObjectURL(url);
+          showToast('Backup exported');
+        } else if (e.target.id === 'resetSampleBtn') {
+          state = getDefaultState();
+          saveState();
+          applyTheme();
+          closeModal();
+          renderNav();
+          renderMain();
+          showToast('Reset to starter data');
+        }
+      });
+
+      // Header & Search Listeners
+      const searchInput = document.getElementById('globalSearchInput');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+      searchInput.addEventListener('input', () => {
+        ui.searchQuery = searchInput.value;
+        clearSearchBtn.classList.toggle('hidden', !ui.searchQuery);
+        if (ui.activeView === 'search') {
+          renderMain();
+        } else {
+          renderSearchDropdown();
+        }
+      });
+      searchInput.addEventListener('focus', () => {
+        if (ui.searchQuery.trim() && ui.activeView !== 'search') renderSearchDropdown();
+      });
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && ui.searchQuery.trim()) {
+          ui.activeView = 'search';
+          document.getElementById('searchDropdown').classList.add('hidden');
+          renderNav();
+          renderMain();
+        }
+      });
+      clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        ui.searchQuery = '';
+        clearSearchBtn.classList.add('hidden');
+        document.getElementById('searchDropdown').classList.add('hidden');
+        if (ui.activeView === 'search') renderMain();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          searchInput.focus();
+        } else if (e.key === 'Escape') {
+          closeModal();
+          document.getElementById('searchDropdown').classList.add('hidden');
+        }
+      });
+
+      document.getElementById('brandHomeBtn').addEventListener('click', () => {
+        ui.activeView = 'dashboard';
+        renderNav();
+        renderMain();
+      });
+      document.getElementById('quickAddBtn').addEventListener('click', () => openItemModal('quick'));
+      document.getElementById('customizeBtn').addEventListener('click', openCustomizeModal);
+      document.getElementById('sidebarAddCourseBtn').addEventListener('click', () => openItemModal('course'));
+      document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+      document.getElementById('appModalBackdrop').addEventListener('click', closeModal);
+      document.getElementById('mobileMenuBtn').addEventListener('click', () => document.getElementById('mobileDrawer').classList.remove('hidden'));
+      document.getElementById('closeMobileDrawerBtn').addEventListener('click', () => document.getElementById('mobileDrawer').classList.add('hidden'));
+      document.getElementById('mobileDrawerBackdrop').addEventListener('click', () => document.getElementById('mobileDrawer').classList.add('hidden'));
+
+      // Init
+      applyTheme();
+      renderNav();
+      renderMain();
+    })();
+  </script>
+</body>
+</html>
